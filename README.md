@@ -22,7 +22,9 @@ az vm create \
 --name ansiblectrl \
 --image OpenLogic:CentOS:7.5:latest \
 --admin-username ansibleuser \
---admin-password <password>
+--admin-password <password> \
+--vnet-name ansiblectrlVNET \
+--subnet ansiblectrlSubnet
 
 az vm show -d -g nokia_assignment-rg -n ansiblectrl --query publicIps -o tsv
 
@@ -48,6 +50,28 @@ chmod +x ansible-install.sh
 ./ansible-install.sh
 ```
 
+Login to azure and do initial setup
+```bash
+az login
+```
+Follow instruction and complete login process. Now do initial setup as follow
+
+```bash
+mkdir ~/.azure
+vi ~/.azure/credentials
+```
+
+paste following lines
+
+```vi
+[default]
+subscription_id=<your-subscription_id>
+client_id=<security-principal-appid>
+secret=<security-principal-password>
+tenant=<security-principal-tenant>
+```
+
+Now we are ready to create k8server machine.
 
 
 # Step 2 Configure single node k8s

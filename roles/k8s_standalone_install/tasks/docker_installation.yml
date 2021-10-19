@@ -1,0 +1,40 @@
+---
+- name: Add docker repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+
+- name: Install supported version of docker
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: Create other directories required
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/docker
+    - /etc/systemd/system/docker.service.d
+
+- name: Set cgroup driver as systemd
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+
+- name: Start and enable docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Restart docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes

@@ -1,0 +1,54 @@
+---
+- name: Ansible check directory.
+  stat:
+    path: /project/devops/jboss
+  register: kubelet_folder
+
+- name: "echo if directory already existed"
+  debug:
+    msg: "the jboss directory is already existed"
+  when: kubelet_folder.stat.exists
+
+- name: "Ansible Create directory if not exists"
+  file:
+    path: /var/lib/kubelet/
+    state: directory
+    mode: 0755
+    group: root
+    owner: root
+  when: kubelet_folder.stat.exists == false
+
+- name: Update kubelet config
+  template: 
+    src: kubelet_config.yaml.j2 
+    dest: "/var/lib/kubelet/config.yaml"
+
+- name: Daemon-reload
+  command: systemctl daemon-reload
+
+- name: Restart Kubelet
+  command: systemctl restart kubelet
+
+#- name: Create cluster
+#  command: kubeadm init --pod-network-cidr=192.168.0.0/16
+
+- name: kubeconfig dir create
+  command: mkdir -p $HOME/.kube
+
+- name: copy kube config
+  command: sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+
+- name: Give kubectl rights
+  command: sudo chown root:root $HOME/.kube/config
+  
+- name: Config for root user
+  command: export KUBECONFIG=/etc/kubernetes/admin.conf
+  
+- name: Install Calico networking
+  command: kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+
+- name: Install Calico networking
+  command: kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+
+- name: Install Calico networking
+  command: kubectl taint nodes --all node-role.kubernetes.io/master-

@@ -1,0 +1,7 @@
+---
+- name: install kubernetes
+  hosts: kubeserver
+  become: true
+  become_method: sudo
+  roles:
+    - k8s_standalone_install 

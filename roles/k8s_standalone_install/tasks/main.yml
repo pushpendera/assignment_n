@@ -1,0 +1,17 @@
+---
+# tasks file for k8s_standalone_install
+
+- name: Perfrom pre installation tasks
+  include: pre_installation.yml
+
+- name: Perfrom docker installation
+  include: docker_installation.yml
+
+- name: Perfrom k8s package installation
+  include: k8pkg_installation.yml
+
+- name: Perfrom firewall config
+  include: firewall_setup.yml 
+
+- name: Perfrom k8s setup
+  include: k8s_setup.yml

@@ -1,0 +1,2 @@
+[kubeserver]
+10.0.0.6 ansible_user=kubeuser

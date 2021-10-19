@@ -1,0 +1,12 @@
+---
+# vars file for k8s_standalone_install
+package_list:
+  - wget
+  - python-firewall
+  - vim
+  - device-mapper-persistent-data
+  - firewalld
+  - bash-completion
+  - curl
+  - yum-utils
+  - lvm2

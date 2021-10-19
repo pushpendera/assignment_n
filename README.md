@@ -39,6 +39,7 @@ ssh ansibleuser@<ip of ansiblectrl>
 Execute following command in order to install ansible and ansible azure module
 
 ```bash
+yum install -y git
 git clone https://github.com/pushpendera/nokia_assignment.git
 
 cd nokia_assignment/azure_resources

@@ -1,0 +1,84 @@
+---
+- name: generate SSH key
+  hosts: localhost
+  connection: local
+  vars:
+    ssh_key_filename: id_rsa_k8s
+    resource_group_name: nokia_assignment-rg
+  tasks:
+    - name: create ssh directory 
+      file:
+        path: "~/.ssh"
+        state: directory
+    - name: generate SSH key "{{ssh_key_filename}}"
+      openssh_keypair:
+        path: "~/.ssh/{{ssh_key_filename}}"
+        type: rsa
+        size: 4096
+        state: present
+        force: no
+    - name: read public key
+      shell: cat "/root/.ssh/{{ssh_key_filename}}.pub"
+      register: key_data
+      become: yes
+    - name: Create resource group
+      azure.azcollection.azure_rm_resourcegroup:
+        name: "{{ resource_group_name }}"
+        location: northeurope
+    - name: Create public IP address
+      azure.azcollection.azure_rm_publicipaddress:
+        resource_group: "{{ resource_group_name }}"
+        allocation_method: Static
+        name: k8sPublicIP
+      register: output_ip_address
+    - name: Public IP of VM
+      debug:
+        msg: "The public IP is {{ output_ip_address.state.ip_address }}."
+    - name: Create Network Security Group that allows SSH
+      azure.azcollection.azure_rm_securitygroup:
+        resource_group: "{{ resource_group_name }}"
+        name: nokiaNSG
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+    - name: Create virtual network interface card
+      azure.azcollection.azure_rm_networkinterface:
+        resource_group: "{{ resource_group_name }}"
+        name: nic0
+        virtual_network: ansiblectrlVNET
+        subnet: ansiblectrlSubnet
+        public_ip_name: k8sPublicIP
+        security_group: nokiaNSG
+      register: azure_networkinterfaces
+    - name: Create VM
+      azure.azcollection.azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_name }}"
+        name: kubeserver
+        vm_size: Standard_D8s_v4 
+        admin_username: kubeuser
+        admin_password: 1qaz2wsx#EDC
+        ssh_password_enabled: True
+        network_interface_names: nic0
+        image:
+          offer: CentOS
+          publisher: OpenLogic
+          sku: '7.5'
+          version: latest
+        ssh_public_keys:
+          - path: /home/kubeuser/.ssh/authorized_keys
+            key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC803Pd8f6s3zcq3k9/E4z9YXQfdnWzyEXaVdSmmSa/IpkX/mK2WPkyNzkyXKeZKUnCZxAcDr+OetbcjNDv+v21MkCK+nWpqRComFlEsE6VM7wRiwba9ZnfXvEQPWHOSxrJMWr+Hyn0JMV0PHEsbMGgYvKQLOoLHmgTmYRzJWBTTnIE57z75yo3BAQIuwupbSADURP68ZhUeW6tvWoYzD0CcWZAjk6bgJUmc6I9/JaTs3i2yjoBqoGSTflaqUTNC/Z3mubQClGK22/cA/BCxSLwuioTubzQqyiTbGv648nlYHfkVPy8HpXdqsLwMUxhs+4aDnF8rUebu9ufgVrRFjTffrlGihhHsJbA4gse7NsAzos0FZ+ulJAzB0GWLTKT7K/iZGwI17NyK2804JRMDLFFpDa2g4QIQZeXqij4QbWgKTyxcuccGRQYhP/oVJylKqkDDJRWyJE6LtZoZKAJT/JDUaIbPBcA8auon5mD5QCb/vNM7OWfeLDO8W/4uYWOALAB5UA/b91HIMVC4FG6yJddKNqOCRkqwoVWFtZPCcHZWf9twmn6K46+bT/hpfLWaDSml/hUbnOTa4A/n/lW0M8HIcsahylgn/g/dv3I0yjELMaA2v1kAngAxcAPjjmjPV1Zv8B/guMec/AVDKM2aWwa5g7RIZuKdmEvF9pExa7kIQ=="
+    - name: Get network interface details
+      azure.azcollection.azure_rm_networkinterface_info:
+        resource_group: "{{ resource_group_name }}"
+        name: nic0
+      register: azure_networkinterfaces
+      delegate_to: localhost
+    - name: print internal IP
+      debug: msg="Internal ip is {{azure_networkinterfaces.networkinterfaces[0].ip_configurations[0].private_ip_address}}"
+    - name: set value of vm internal IP
+      set_fact:
+        vm_internal_ip: "{{azure_networkinterfaces.networkinterfaces[0].ip_configurations[0].private_ip_address}}"

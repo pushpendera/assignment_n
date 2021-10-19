@@ -12,6 +12,7 @@ This step is optional. In case we have 2 servers already available then we can d
 ## Make ansible control machine
 For making ansible control machine in azure make sure you have azure cli installed on your machine.
 
+```bash
 > az group create --name nokia_assignment-rg --location northeurope
 > az vm create \
 --resource-group nokia_assignment-rg \
@@ -21,9 +22,9 @@ For making ansible control machine in azure make sure you have azure cli install
 --admin-password <password>
 
 > az vm show -d -g nokia_assignment-rg -n ansiblectrl --query publicIps -o tsv
-  
+```bash  
  Note the IP of virtual machine and login to VM using
-  
+ ```bash 
  $ ssh ansibleuser@<ip of ansiblectrl>
-  
+ ```bash
 ## Install ansible on ansiblectrl and 

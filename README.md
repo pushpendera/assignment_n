@@ -73,6 +73,33 @@ tenant=<security-principal-tenant>
 
 Now we are ready to create k8server machine.
 
+```bash
+cd /root/nokia_assignment/azure_resources
+ansible-playbook create_vm_playbook.yml
+```
+
+This will print the vm IP. Add it to inventory file
+```vi
+vi inventory.txt
+[kubeserver]
+10.0.0.6
+```
+
+Now login to kubeserver machine and add kubeuser to sudoers
+
+```bash
+ssh -i ~/.ssh/id_rsa.pub kubeuser@10.0.0.6
+sudo -i
+visudo
+
+Now add a entry in the file as
+kubeuser ALL=(ALL) NOPASSWD:ALL
+
+exit
+exit
+```
+
+Now we can start deploying kubernetes on this. For this we will use ansible playbook to configure k8s on this node.
 
 # Step 2 Configure single node k8s
 

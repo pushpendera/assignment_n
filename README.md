@@ -22,7 +22,9 @@ az vm create \
 --name ansiblectrl \
 --image OpenLogic:CentOS:7.5:latest \
 --admin-username ansibleuser \
---admin-password <password>
+--admin-password <password> \
+--vnet-name ansiblectrlVNET \
+--subnet ansiblectrlSubnet
 
 az vm show -d -g nokia_assignment-rg -n ansiblectrl --query publicIps -o tsv
 

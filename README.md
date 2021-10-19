@@ -7,7 +7,7 @@
 - For my assignment I will be creating one in Azure Cloud and will document steps for that as well.
 - I will be using azure cloud for completing my assigment, however azure related steps can be ignored while reviewing the assignment. I am using azure to practically deploy the k8s single node cluster. 
 - In case infrastructure is already ready jump to
-`[Step 2 Configure single node k8s](#step-2-configure-single-node-k8s)`  
+link: [Step 2 Configure single node k8s](#step-2-configure-single-node-k8s)
 
 # Step 1 - (Optional)
 This step is optional. In case we have 2 servers already available then we can directly jump to k8s setup.

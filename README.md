@@ -36,6 +36,17 @@ ssh ansibleuser@<ip of ansiblectrl>
 
 ## Install ansible on ansiblectrl and azure ansible module
 
+Execute following command in order to install ansible and ansible azure module
+
+```bash
+git clone https://github.com/pushpendera/nokia_assignment.git
+
+cd nokia_assignment/azure_resources
+chmod +x ansible-install.sh
+
+./ansible-install.sh
+```
+
 
 
 # Step 2 Configure single node k8s

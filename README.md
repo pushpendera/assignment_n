@@ -157,3 +157,25 @@ Now since k8s is up we can deploy container. I will not install ingress controll
 
 Deploy nginx deployment
 
+copy nginx-deployment.yaml and nginx-svc.yaml to kubeserver and execute ->
+
+```bash
+kubectl apply -f nginx-deployment.yaml
+kubectl apply -f nginx-svc.yaml
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-66b6c48dd5-vchlc   1/1     Running   0          16s
+nginx-deployment-66b6c48dd5-wrxjz   1/1     Running   0          16s
+
+[kubeuser@kubeserver ~]$ kubectl get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP        33m
+my-service   NodePort    10.109.73.167   <none>        80:30007/TCP   7s
+
+```bash
+curl http://localhost:30007
+```
+
+We can open port on the kubeserve and can see this working from browser as well.
+
+

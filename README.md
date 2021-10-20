@@ -102,6 +102,12 @@ exit
 Now we can start deploying kubernetes on this. For this we will use ansible playbook to configure k8s on this node.
 
 # Step 2 Configure single node k8s
+No since environment is ready
+
+![alt text](https://github.com/pushpendera/nokia_assignment/blob/main/blob/azure%20resource.PNG)
+
+we need to install kubernetes on single machine.
+
 
 
 

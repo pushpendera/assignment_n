@@ -9,6 +9,8 @@ pip3 install ansible[azure]
 
 # Install Ansible az collection for interacting with Azure.
 /usr/local/bin/ansible-galaxy collection install azure.azcollection
+/usr/local/bin/ansible-galaxy collection install community.general
+/usr/local/bin/ansible-galaxy collection install ansible.posix
 wget https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt
 pip3 install -r requirements-azure.txt
 
